@@ -83,6 +83,9 @@ module Diffy
     end
 
     def each
+      rl1 = /---\s+\S+\s+[\d-]+\s+[\d:.]+\s+\+\d+\n/
+      rl2 = /\+\+\+\s+\S+\s+[\d-]+\s+[\d:.]+\s+\+\d+\n/
+      rl3 = /@@\s+-\d+,\d+\s+\+\d+,\d+\s+@@\n/
       lines = case @options[:include_diff_info]
       when false then diff.split("\n").reject{|x| x =~ /^(---|\+\+\+|@@|\\\\)/ }.map {|line| line + "\n" }
       when true then diff.split("\n").map {|line| line + "\n" }
