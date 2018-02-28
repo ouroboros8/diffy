@@ -114,6 +114,20 @@ module Diffy
       end
     end
 
+    def each_hunk
+      # this function takes a diff in unified format
+      # (https://en.wikipedia.org/wiki/diff_utility#unified_format) and splits it
+      # into "change hunks": contigous hunks of context around a change.
+      hunk_header_regex = /^@@\s+-\d+,\d+\s+\+\d+,\d+\s+@@\n$/
+      hunks = diff.split('\n').chunk_while { | _, line |
+        not line =~ hunk_header_regex
+      }.map { | e | e.join }
+      if not @options[:include_diff_info]
+        # Drop the diff header and each hunk's hunk header
+        hunks = hunks[1..-1].map { | hunk | hunk[-1..1] }
+      end
+    end
+
     def tempfile(string)
       t = Tempfile.new('diffy')
       # ensure tempfiles aren't unlinked when GC runs by maintaining a
